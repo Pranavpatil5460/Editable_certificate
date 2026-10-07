@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Editable Certificate</title>
+<style>
+:root{--bg:#e9e7e2;--ink:#1d2a44;--red:#8c1c1c;--org:#f58a2e;--gold:#e8c46a;--bar:#fff;--barink:#222}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1c1c1f;--bar:#2a2a2e;--barink:#eee}}
+:root[data-theme="dark"]{--bg:#1c1c1f;--bar:#2a2a2e;--barink:#eee}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:inherit}
+body{margin:0;background:var(--bg);font-family:'Segoe UI',Arial,sans-serif;color:var(--ink)}
+.bar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:center;padding:12px;background:var(--bar);color:var(--barink);font-size:14px}
+.bar button,.bar label{border:1px solid #999;background:transparent;color:inherit;padding:7px 12px;border-radius:6px;cursor:pointer;font-size:14px}
+.bar button.p{background:var(--org);border-color:var(--org);color:#fff}
+.wrap{overflow:hidden;padding:12px}
+#fit{margin:0 auto;position:relative}
+#cert{position:absolute;left:0;top:0;transform-origin:0 0;width:1280px;height:930px;background:#fff;overflow:hidden;
+ background-image:repeating-linear-gradient(135deg,#fff 0 6px,#fafafa 6px 7px)}
+.top{position:absolute;left:0;top:0;width:100%;height:240px}
+.bl{position:absolute;bottom:0;width:90px;height:230px}
+[contenteditable]{outline:none;cursor:text}
+[contenteditable]:hover,[contenteditable]:focus{background:rgba(245,138,46,.15);border-radius:3px}
+.t{position:absolute;left:0;width:100%;text-align:center;margin:0}
+#title{top:28px;font-size:64px;font-weight:900;color:#fff;letter-spacing:2px;text-shadow:0 3px 0 rgba(0,0,0,.12)}
+#sub{top:104px;font-size:22px;letter-spacing:3px;color:#fff}
+.logo{position:absolute;top:50px;width:125px;height:150px;border-radius:18px;border:5px solid #eee;box-shadow:0 4px 10px rgba(0,0,0,.2);display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;text-align:center;font-weight:700}
+.logo img{width:100%;height:100%;object-fit:contain}
+#l1{left:955px;background:#fff;color:#d62828;font-size:34px;font-style:italic}
+#l2{left:1108px;background:#262b4a;color:#fff;font-size:18px}
+.trust{top:262px;font-size:25px}
+.inst{top:300px;font-size:30px;font-weight:800;color:var(--red)}
+.small{font-size:17px;line-height:25px}
+.line{top:512px;left:136px;width:1030px;text-align:left;font-size:23px}
+.line span.nm{display:inline-block;min-width:660px;border-bottom:1px dotted #555;margin-left:6px;font-weight:700;color:var(--red);padding:0 8px;vertical-align:bottom;white-space:nowrap}
+.body{font-size:23px}
+.prog{font-size:28px;font-weight:800;color:var(--red)}
+sup{line-height:0}
+.sig{position:absolute;left:975px;top:735px;width:170px;height:80px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#3b5fa8;font-size:14px;border:1px dashed transparent}
+.sig:hover{border-color:#999}.sig img{width:100%;height:100%;object-fit:contain}
+.sg{position:absolute;top:830px;width:290px;text-align:center}
+.sg b{display:block;font-size:22px}.sg i{font-style:normal;font-size:15px;font-weight:700}
+.div{position:absolute;top:830px;width:3px;height:64px;background:#b3342b}
+@media print{.bar{display:none}body,:root{background:#fff;padding:0}.wrap{padding:0;overflow:visible}
+ [contenteditable]:hover,[contenteditable]:focus{background:none}.sig:hover{border-color:transparent}
+ @page{size:1280px 930px;margin:0}#fit{width:1280px!important;height:930px!important;margin:0}#cert{transform:none!important}}
+</style>
+</head>
+<body>
+<div class="bar">
+ <button class="p" onclick="window.print()">Print / Save as PDF</button>
+ <label>Logo 1 <input type="file" accept="image/*" hidden onchange="pic(this,'l1')"></label>
+ <label>Logo 2 <input type="file" accept="image/*" hidden onchange="pic(this,'l2')"></label>
+ <label>Signature <input type="file" accept="image/*" hidden onchange="pic(this,'sig')"></label>
+ <button onmousedown="event.preventDefault()" onclick="setSup(true)">x² Superscript</button>
+ <button onclick="toggleLogo('l1',this)">Hide Logo 1</button>
+ <button onclick="toggleLogo('l2',this)">Hide Logo 2</button>
+ <button onclick="reset()">Reset</button>
+</div>
+<div class="wrap"><div id="fit">
+<div id="cert">
+ <svg class="top" viewBox="0 0 1280 240" preserveAspectRatio="none">
+  <path d="M0 0H1280V60C1180 90 1120 150 1000 190C900 215 840 225 760 235C700 240 640 238 600 232C480 200 380 150 300 110C200 60 100 40 0 50Z" fill="#e5b95a"/>
+  <path d="M0 0H1280V30C1150 70 1080 130 960 170C880 195 800 205 740 210C640 205 560 190 470 150C360 100 230 40 0 20Z" fill="#f58a2e"/>
+  <path d="M0 40C100 20 220 70 330 125L420 170C300 120 150 60 0 70Z" fill="#fff" opacity=".55"/>
+ </svg>
+ <svg class="bl" style="left:0" viewBox="0 0 90 230"><path d="M0 40C40 90 70 160 90 230H0Z" fill="#f2cd78"/><path d="M0 110C30 150 50 190 60 230H0Z" fill="#f58a2e"/></svg>
+ <svg class="bl" style="right:0" viewBox="0 0 90 230"><path d="M90 40C50 90 20 160 0 230H90Z" fill="#f2cd78"/><path d="M90 110C60 150 40 190 30 230H90Z" fill="#f58a2e"/></svg>
+
+ <h1 class="t" id="title" contenteditable>CERTIFICATE</h1>
+ <p class="t" id="sub" contenteditable>OF ACHIEVEMENT</p>
+ <div class="logo" id="l1" onclick="this.querySelector('input')||pickLogo('l1')"><span contenteditable>isit</span></div>
+ <div class="logo" id="l2"><span contenteditable>PLATO<br>MINDS</span></div>
+
+ <p class="t trust" contenteditable>Shri Shamrao Patil Yadravkar Educational &amp; Charitable Trust's</p>
+ <p class="t inst" contenteditable>SHARAD INSTITUTE OF TECHNOLOGY COLLEGE OF ENGINEERING</p>
+ <p class="t small" style="top:340px" contenteditable>An Autonomous Institute</p>
+ <p class="t small" style="top:366px" contenteditable>NBA Accredited Programmes. An 'A' Grade Institute Accredited By NAAC,</p>
+ <p class="t small" style="top:392px" contenteditable>An ISO 9001:2015 Accredited Enstatite.</p>
+
+ <p class="t line"><span contenteditable>This is to certify that, Mr./Miss</span><span class="nm" contenteditable></span></p>
+ <p class="t body" style="top:546px" contenteditable>TY B.Tech department of Computer Science and Engineering successfully completed</p>
+ <p class="t body" style="top:586px" contenteditable>Value Added Program entitled</p>
+ <p class="t prog" style="top:624px" contenteditable>“FullStack web Development”</p>
+ <p class="t body" style="top:667px" contenteditable>Conducted from 1<sup>st</sup> Jan 2026 - 8<sup>th</sup> Jan 2026</p>
+
+ <div class="sig" id="sig" title="Click to add signature"><span>+ signature</span></div>
+
+ <div class="sg" style="left:75px"><b contenteditable>Platominds Services Pvt. Ltd</b><i contenteditable>Trainer</i></div>
+ <div class="div" style="left:486px"></div>
+ <div class="sg" style="left:445px"><b contenteditable>Mrs. P. P. Langde</b><i contenteditable>VAP Coordinator</i></div>
+ <div class="div" style="left:712px"></div>
+ <div class="sg" style="left:680px"><b contenteditable>Dr. S. S. Gurav</b><i contenteditable>HOD, CSE</i></div>
+ <div class="div" style="left:936px"></div>
+ <div class="sg" style="left:915px"><b contenteditable>Dr. B. B. Sangame</b><i contenteditable>Principal, SITCOE</i></div>
+</div>
+</div></div>
+<script>
+function fit(){var w=document.querySelector('.wrap').clientWidth-24,k=Math.min(1,w/1280),f=document.getElementById('fit');
+ f.style.width=1280*k+'px';f.style.height=930*k+'px';document.getElementById('cert').style.transform='scale('+k+')';}
+fit();addEventListener('resize',fit);addEventListener('afterprint',fit);
+function pic(inp,id){var f=inp.files[0];if(!f)return;var r=new FileReader();r.onload=function(){
+ var el=document.getElementById(id);el.innerHTML='<img src="'+r.result+'">';};r.readAsDataURL(f);}
+function pickLogo(id){}
+['l1','l2','sig'].forEach(function(id){document.getElementById(id).addEventListener('click',function(e){
+ if(e.target.isContentEditable)return;var i=document.createElement('input');i.type='file';i.accept='image/*';
+ i.onchange=function(){pic(i,id)};i.click();});});
+document.addEventListener('focusout',function(e){var t=e.target;if(!t.isContentEditable||t.dataset.noauto)return;
+ var h=t.innerHTML,n=h.replace(/(\d)(st|nd|rd|th)\b/g,'$1<sup>$2</sup>');if(n!==h)t.innerHTML=n;});
+var saved;document.addEventListener('selectionchange',function(){var g=getSelection();
+ if(g.rangeCount&&document.getElementById('cert').contains(g.anchorNode))saved=g.getRangeAt(0).cloneRange();});
+document.addEventListener('input',function(e){
+ if(!e.data||!/^[\s\u00a0]$/.test(e.data))return;
+ var g=getSelection();if(!g.rangeCount||!g.isCollapsed)return;var n=g.anchorNode;
+ var sp=n&&(n.nodeType==3?n.parentNode:n).closest('sup');if(!sp)return;
+ if(n.nodeType==3&&g.anchorOffset===n.length&&/[\s\u00a0]$/.test(n.data)){
+  n.data=n.data.replace(/[\s\u00a0]+$/,'');
+  var t=document.createTextNode('\u00a0');sp.after(t);
+  var r=document.createRange();r.setStart(t,1);r.collapse(true);g.removeAllRanges();g.addRange(r);}
+});
+var lastHost;document.addEventListener('focusin',function(e){if(e.target.isContentEditable)lastHost=e.target;});
+function unwrap(x){var f=document.createDocumentFragment();while(x.firstChild)f.appendChild(x.firstChild);x.replaceWith(f);}
+function setSup(on){var g=getSelection();if(saved){g.removeAllRanges();g.addRange(saved);}
+ var n=g.anchorNode,el=n&&(n.nodeType==3?n.parentNode:n),host=(el&&el.closest&&el.closest('[contenteditable]'))||lastHost;
+ if(on){if(!document.queryCommandState('superscript'))document.execCommand('superscript');return;}
+ if(!host)return;host.dataset.noauto='1';
+ var r=g.rangeCount?g.getRangeAt(0):null,inside=r&&host.contains(r.commonAncestorContainer);
+ var list=[].slice.call(host.querySelectorAll('sup,sub,span[style]')),t;
+ if(inside&&!r.collapsed)t=list.filter(function(x){return r.intersectsNode(x)});
+ else{t=list.filter(function(x){return n&&x.contains(n)});
+  if(!t.length&&inside&&document.queryCommandState('superscript')){document.execCommand('superscript');return;}
+  if(!t.length)t=list;}
+ t.forEach(unwrap);host.normalize();}
+function toggleLogo(id,b){var e=document.getElementById(id),h=e.style.display==='none';
+ e.style.display=h?'':'none';b.textContent=(h?'Hide ':'Show ')+(id==='l1'?'Logo 1':'Logo 2');}
+function reset(){if(confirm('Reset everything to the original?'))location.reload();}
+</script>
+</body>
+</html>
